@@ -8,25 +8,39 @@ const map = L.map("map").setView([35.70015230480259, 51.33811941768732], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
 
-// set custom icon for pointer
-const metroIcon = L.icon({
-  iconUrl: "https://www.svgrepo.com/show/397501/metro.svg",
-  iconSize: [30, 30],
-});
+// data
+const shops = [
+  {
+    position: [35.69943334081197, 51.3335470542868],
+    name: 'فروشگاه مرکزی',
+    description: 'شعبه اصلی',
+    img: 'img/shop-icon2.png',
+  },
+  {
+    position: [35.70028773592904, 51.33222538864043],
+    name: 'فروشگاه شمال',
+    description: 'شعبه شمال',
+    img: 'img/shop-icon3.png',
+  },
+]
 
 
-// add pointer
-let marker1 = L.marker([35.70008260317534, 51.33816233315887]).addTo(map);
-
-let marker2 = L.marker([35.69969245203644, 51.32015210727593], {
-  icon: metroIcon,
-  title: "subway",
-}).addTo(map);
+// custom icon
+const storeIcon = L.icon({
+  iconUrl: 'img/shop-icon1.png',
+  iconSize: [30, 30]
+})
 
 
-// add popup
-marker1.bindPopup(`
-    <h3>title</h3>
-    <p>description</p>
-    <button>click for more</button>
-`);
+// add marker & popup
+shops.forEach(shop => {
+  L.marker(shop.position, {
+    icon: storeIcon
+  })
+  .bindPopup(`
+    <img src='${shop.img}' style='width: 100%;' />
+    <h3>${shop.name}</h3>  
+    <p>${shop.description}</p>  
+  `)
+  .addTo(map)
+})
