@@ -25,19 +25,8 @@ let marker2 = L.marker([35.69969245203644, 51.32015210727593], {
 
 
 // add popup
-// marker1.bindPopup('azadi tower')
-
-// marker1.bindPopup('azadi tower').openPopup()
-
-// marker1.bindPopup(`
-//     <h3>title</h3>
-//     <p>description</p>
-//     <button>click for more</button>
-// `);
-
-marker1.bindPopup("azadi tower", {
-  minWidth: 200,
-  maxWidth: 300,
-  closeButton: true,
-  closeOnClick: true,
-});
+marker1.bindPopup(`
+    <h3>title</h3>
+    <p>description</p>
+    <button>click for more</button>
+`);
