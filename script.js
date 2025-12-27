@@ -29,9 +29,3 @@ map.on("moveend", (e) => {
 });
 
 map.panTo([35.744122865962225, 51.14135870933576]);
-
-
-// api for types of map
-// leaflet-extras.github.io/leaflet-providers/previews
-
-// thunderforest.com/maps
