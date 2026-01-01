@@ -42,6 +42,7 @@ map.on('click', e => {
       ],
       createMarker: () => null,
       show: false,
+      collapsible: false,
       lineOptions: {
         styles: [{
           color: 'blue',
@@ -49,7 +50,7 @@ map.on('click', e => {
         }]
       }
     }).addTo(map);
-
+    
     // information about route
     control.on('routesfound', e => {
       let summary = e.routes[0].summary

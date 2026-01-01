@@ -1,4 +1,17 @@
 #map {
-    width: 500px;
-    height: 500px;
+    width: 800px;
+    height: 600px;
+}
+
+/* مخفی کردن باکس اطلاعات مسیر در سمت راست */
+.leaflet-routing-container {
+    display: none !important;
+}
+
+.leaflet-routing-alt {
+    display: none !important;
+}
+
+.leaflet-routing-collapse-btn {
+    display: none !important;
 }
