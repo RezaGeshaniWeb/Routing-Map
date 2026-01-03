@@ -53,7 +53,9 @@ map.on('click', e => {
   markers.push(marker)
 
   // set popup
-  const lable = markers.length === 1 ? 'مبدا' : 'مقصد'
+  const lable = markers.length === 1 
+    ? 'Origin<br><span class="persian-text">مبدا</span>' 
+    : 'Destination<br><span class="persian-text">مقصد</span>'
   marker.bindPopup(lable).openPopup()
 
   // set routing machine
@@ -78,7 +80,8 @@ map.on('click', e => {
       let summary = e.routes[0].summary
 
       let distance = summary.totalDistance
-      let distanceText = distance > 1000 ? Math.round(distance / 1000) + ' کیلومتر' : Math.round(distance) + ' متر'
+      let distanceText = distance > 1000 ? Math.round(distance / 1000) + ' km' : Math.round(distance) + ' m'
+      let distanceTextPersian = distance > 1000 ? Math.round(distance / 1000) + ' کیلومتر' : Math.round(distance) + ' متر'
 
       let time = Math.round(summary.totalTime / 60)
 
@@ -87,10 +90,10 @@ map.on('click', e => {
 
       L.popup().setLatLng(markers[1].getLatLng()).setContent(`
         <div>
-          <h5>اطلاعات مسیر</h5>
-          <p>فاصله: ${distanceText}</p>
-          <p>زمان تقریبی: ${time} دقیقه</p>
-          <p>کرایه: ${totalMoney}</p>
+          <h5>Route Information<br><span class="persian-text">اطلاعات مسیر</span></h5>
+          <p>Distance: ${distanceText}<br><span class="persian-text">فاصله: ${distanceTextPersian}</span></p>
+          <p>Estimated Time: ${time} minutes<br><span class="persian-text">زمان تقریبی: ${time} دقیقه</span></p>
+          <p>Fare: ${totalMoney}<br><span class="persian-text">کرایه: ${totalMoney}</span></p>
         </div>  
       `).openOn(map)
     })
