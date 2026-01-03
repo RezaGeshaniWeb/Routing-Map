@@ -21,6 +21,7 @@ const geocoder = L.Control.geocoder({
 
 // routing machine
 let control, startMarker, endMarker, markers = []
+let markerTaxi = null;
 
 map.on('click', e => {
   if (markers.length >= 2) {
@@ -32,6 +33,10 @@ map.on('click', e => {
     if (control) {
       map.removeControl(control)
     }
+    if (markerTaxi) {
+      map.removeLayer(markerTaxi);
+      markerTaxi = null; 
+    }
   }
 
   // add two markers with SVG icon
@@ -41,20 +46,31 @@ map.on('click', e => {
       <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
     </svg>
   `
+  const svgTaxiIcon = `icon/car.png`
+  const imgTaxiIcon = document.createElement('img')
+  imgTaxiIcon.setAttribute('src', svgTaxiIcon)
 
   const markerIcon = L.divIcon({
     html: svgIcon,
     className: 'custom-svg-icon',
-    iconSize: [24, 24],
+    iconSize: [10, 10],
     iconAnchor: [12, 24],
     popupAnchor: [0, -24],
+  })
+  const taxiIcon = L.divIcon({
+    html: imgTaxiIcon,
+    className: 'custom-svg-icon',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    rotationOrigin: 'center center',
+    rotationAngle: 90
   })
   const marker = L.marker(e.latlng, { icon: markerIcon }).addTo(map)
   markers.push(marker)
 
   // set popup
-  const lable = markers.length === 1 
-    ? 'Origin<br><span class="persian-text">مبدا</span>' 
+  const lable = markers.length === 1
+    ? 'Origin<br><span class="persian-text">مبدا</span>'
     : 'Destination<br><span class="persian-text">مقصد</span>'
   marker.bindPopup(lable).openPopup()
 
@@ -75,8 +91,52 @@ map.on('click', e => {
       }
     }).addTo(map);
 
-    // information about route
     control.on('routesfound', e => {
+      let routes = e.routes
+      if (routes.length > 0) {
+        const coordinates = routes[0].coordinates;
+
+        function animateTaxi(coord) {
+          if (markerTaxi) {
+            map.removeLayer(markerTaxi);
+          }
+
+          let i = 0
+          let speed = 200
+          const initialBearing = calculate(coord[0].lat, coord[0].lng, coord[1].lat, coord[1].lng)
+
+          markerTaxi = L.marker(markers[0].getLatLng(), { icon: taxiIcon, rotationAngle: initialBearing }).addTo(map)
+
+          function animate() {
+            if (i < coord.length - 1) {
+              let current = coord[i]
+              let next = coord[i + 1]
+
+              const { lat: lat1, lng: lng1 } = current
+              const { lat: lat2, lng: lng2 } = next
+
+              let bearing = calculate(lat1, lng1, lat2, lng2)
+
+              let angleDiff = bearing - markerTaxi.options.rotationAngle
+              if (angleDiff > 180) angleDiff -= 360
+              if (angleDiff < -180) angleDiff += 360
+
+              const newAngle = markerTaxi.options.rotationAngle + angleDiff
+
+              markerTaxi.setLatLng([lat1, lng1])
+              markerTaxi.setRotationAngle(newAngle)
+
+              i++
+              setTimeout(animate, speed)
+            } else {
+              markerTaxi.setLatLng(coord[coord.length - 1]);
+            }
+          }
+          animate()
+        }
+        animateTaxi(coordinates)
+      }
+
       let summary = e.routes[0].summary
 
       let distance = summary.totalDistance
@@ -99,3 +159,18 @@ map.on('click', e => {
     })
   }
 })
+
+function calculate(lat1, lng1, lat2, lng2) {
+  lat1 = lat1 * Math.PI / 180
+  lng1 = lng1 * Math.PI / 180
+  lat2 = lat2 * Math.PI / 180
+  lng2 = lng2 * Math.PI / 180
+
+  const y = Math.sin(lng2 - lng1) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1)
+
+  let bearing = ((Math.atan2(y, x) * 180) / Math.PI)
+  bearing = (bearing + 360) % 360
+
+  return bearing
+}
