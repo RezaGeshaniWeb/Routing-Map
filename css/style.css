@@ -71,8 +71,8 @@ h2 {
 }
 
 #map {
-    width: 85%;
-    max-width: 1200px;
+    width: 90%;
+    max-width: 1600px;
     flex: 1;
     height: calc(100vh - 156px);
     border-radius: 20px;
